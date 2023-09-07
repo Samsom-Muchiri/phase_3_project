@@ -28,8 +28,8 @@ class Managers(Base):
     # Define the many-to-many relationship with Employees
     employees = relationship('Employees', secondary=managers_employees)
 
-    def __repr__(self):
-        print(self.name)
+    """ def __repr__(self):
+        print(self.name) """
 
 
 class Employees(Base):
@@ -41,5 +41,5 @@ class Employees(Base):
     # Define the many-to-many relationship with Managers
     managers = relationship('Managers', secondary=managers_employees)
 
-    def __repr__(self):
-        print(self.name)
+    """ def __repr__(self):
+        print(self.name) """

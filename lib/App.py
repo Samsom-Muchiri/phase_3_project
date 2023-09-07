@@ -48,15 +48,17 @@ else:
 
 # handling commands
 if len(sys.argv) > 1:
-    print(sys.argv[1])
     if sys.argv[1] == "employees":
         manager_name = input("What is your name? ")
-        manager = local_session.query(Managers.name).all()
-        print(manager[0].employees)
+        manager = local_session.query(Managers).filter(
+            Managers.name == manager_name).first()
+        print([name.name for name in manager.employees])
+
 
 else:
     print("Welcome to employee manager")
-    user_type = input("Please tell us how you are? (manager, employee): ")
+    user_type = input(
+        "Please tell us how you are? (manager, employee, new employee): ")
     if user_type == "manager":
         manager_list = [manager[0] for manager in current_managers]
         manager_name = input("What is your name?s: ")
@@ -112,3 +114,33 @@ else:
                         f"Pick a manager from {manager_list}: ")
 
         local_session.close()
+    elif user_type == "new employee":
+        eployee_name = input("What is your name? : ")
+        manager_list = [manager[0] for manager in current_managers]
+        print(manager_list)
+
+        pick_manager = input(f"Pick a manager from {manager_list}: ")
+        while True:
+            if pick_manager in manager_list:
+
+                chosen_manager = local_session.query(Managers).filter(
+                    Managers.name == pick_manager).first()
+
+                if chosen_manager:
+                    last_record = local_session.query(
+                        Employees).order_by(Employees.id.desc()).first()
+
+                    if last_record:
+                        last_record.managers.append(chosen_manager)
+                        local_session.commit()
+                        print(last_record.id)
+                        print(
+                            f"Employee '{last_record.name}' has been assigned to manager '{chosen_manager.name}' successfully.")
+                    break
+                else:
+                    print(f"Manager '{pick_manager}' not found.")
+            else:
+                print(
+                    "Invalid manager choice. Please select a manager from the list.")
+            pick_manager = input(
+                f"Pick a manager from {manager_list}: ")
